@@ -10,9 +10,9 @@ on:
       target:
         description: 'Arc machine to remediate (exactly one)'
         required: true
-        default: 'arc-hyperv-demo'
+        default: 'arc-aws-demo'
         type: choice
-        options: ['arc-hyperv-demo']
+        options: ['arc-aws-demo', 'arc-gcp-demo']
       incident_id:
         description: 'Incident ID from collect-evidence.sh'
         required: true

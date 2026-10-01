@@ -1,6 +1,6 @@
 # Preflight checklist (T-24h and T-60min)
 
-## Workstation and Hyper-V (`powershell/Test-HyperVPrerequisites.ps1`)
+## Workstation and Hyper-V (`powershell/Test-HyperVPrerequisites.ps1`) — Hyper-V items OPTIONAL, not used in the CAS 2026 delivery
 - [ ] Windows 11 Pro/Enterprise/Education or Windows Server (not Home)
 - [ ] Hyper-V feature Enabled; Hyper-V PowerShell module present
 - [ ] Elevated PowerShell; hardware virtualization/SLAT available or hypervisor already running
@@ -23,10 +23,10 @@
 - [ ] Providers registered: HybridCompute, GuestConfiguration, HybridConnectivity
 - [ ] RG exists with tags; LAW + DCR deployed; policy assignments present
 - [ ] `scripts/preflight.sh` PASS in each guest (endpoints, DNS, not-Azure, service healthy)
-- [ ] `azcmagent version` ≥ 1.6x on all three; `azcmagent show` → Connected ×3
+- [ ] `azcmagent version` ≥ 1.6x on both cloud machines; `azcmagent show` → Connected ×2
 
 ## Demo workflow
-- [ ] `queries/arc-health.kql` → healthy ×3; `arc-inventory.kql` → 3 rows
+- [ ] `queries/arc-health.kql` → healthy ×2; `arc-inventory.kql` → 2 demo rows plus any pre-existing Arc servers
 - [ ] Resource Graph, Policy, Log Analytics access verified from the workstation
 - [ ] `ai/explain-incident.sh` returns a grounded answer on `evidence/sanitized-example.json`
 - [ ] GitHub environment `remediation-approval` has a reviewer who is not the presenter's dispatch account

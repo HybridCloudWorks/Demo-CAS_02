@@ -4,7 +4,7 @@ Numbered steps map to the live demonstration order. Time boxes: steps 1–14 are
 
 Each step: **Objective · Environment · Command · Expected output · What the instructor says · What the audience should notice · What can fail · Recovery · Verification · Switch-to-backup point.**
 
-## 1. Workstation and Hyper-V preparation
+## 1. Workstation and Hyper-V preparation (Hyper-V part OPTIONAL: not used in the CAS 2026 delivery)
 
 - **Environment:** Instructor laptop (Windows 11)
 - **Command:**
@@ -64,7 +64,7 @@ for d in aws gcp azure; do (cd terraform/$d && cp -n terraform.tfvars.example te
 - **Verification command:** `terraform validate`
 - **Switch to backup:** N/A
 
-## 5. Hyper-V VM creation
+## 5. Hyper-V VM creation (OPTIONAL: skipped in the CAS 2026 delivery; the fault target is arc-aws-demo)
 
 - **Environment:** Instructor laptop
 - **Command:**
@@ -72,7 +72,7 @@ for d in aws gcp azure; do (cd terraform/$d && cp -n terraform.tfvars.example te
 .\New-ArcHyperVVM.ps1 -SwitchName '<HYPERV_SWITCH_NAME>' -IsoPath '<LINUX_IMAGE_PATH>' -VmPath '<HYPERV_VM_PATH>'  # Path A
 # Path B: -UseBaseVhdx -BaseVhdxPath <VHDX> -CidataIsoPath <CIDATA_ISO>
 ```
-- **Expected output:** VM arc-hyperv-demo created and started; Gen 2; Secure Boot MicrosoftUEFICertificateAuthority
+- **Expected output:** VM arc-aws-demo created and started; Gen 2; Secure Boot MicrosoftUEFICertificateAuthority
 - **Instructor says:** "This VM is the machine outside Azure. It will stay on this laptop for the whole session."
 - **Audience should notice:** Generation 2, Secure Boot with the Linux CA template, dynamic memory, no automatic checkpoints.
 - **What can fail:** Secure Boot template wrong; ISO path wrong; not enough RAM.
@@ -93,7 +93,7 @@ cd terraform/aws && terraform apply tfplan && terraform output
 - **What can fail:** Quota, Canonical AMI lookup, region mismatch.
 - **Recovery action:** Troubleshooting: AWS section.
 - **Verification command:** `aws ssm describe-instance-information --query 'InstanceInformationList[].PingStatus'`
-- **Switch to backup:** If apply fails, AWS column comes from backup; demo still works (fault is on Hyper-V).
+- **Switch to backup:** If apply fails, run the whole incident from backup/ (the fault target is this machine).
 
 ## 7. Google Cloud VM creation
 
@@ -119,6 +119,7 @@ sudo cloud-init status --wait   # AWS/GCP/Path B
 # Path A only: sudo bash scripts/configure-demo-service.sh
 ```
 - **Expected output:** status: done; service responds on 127.0.0.1:8080/health
+- **AWS only, before onboarding:** `sudo hostnamectl set-hostname arc-aws-demo` (EC2 names the guest ip-10-42-0-37; Log Analytics reports `Computer` from the OS hostname, so the Arc name, the health rows and the runbook target must agree). If AMA is already installed: `sudo systemctl restart azuremonitoragent`.
 - **Instructor says:** "Identical guest configuration everywhere, delivered by cloud-init; the Arc agent is deliberately not part of it."
 - **Audience should notice:** Same cloud-init on three platforms.
 - **What can fail:** cloud-init errors; python3 missing.
@@ -155,7 +156,7 @@ sudo -E bash scripts/onboard-arc.sh
 - **What can fail:** AuthorizationFailed; endpoint blocked; device code expired.
 - **Recovery action:** Grant Onboarding role; fix 443; re-run (idempotent).
 - **Verification command:** `sudo azcmagent show | grep 'Agent Status'`
-- **Switch to backup:** Live onboarding of ONE machine (Hyper-V) is optional in the session; AWS/GCP are pre-onboarded. If it fails, show the pre-onboarded ones.
+- **Switch to backup:** Live onboarding is optional in the session; AWS/GCP are pre-onboarded. If it fails, show the pre-onboarded ones.
 
 ## 11. Connection-state verification
 
@@ -179,8 +180,8 @@ az graph query -q "$(sed s/'<AZURE_RESOURCE_GROUP>'/$AZURE_RESOURCE_GROUP/ queri
 ```
 az graph query -q "$(sed s/'<AZURE_RESOURCE_GROUP>'/$AZURE_RESOURCE_GROUP/ queries/resource-graph-query.kql | sed -n '1,9p')" -o table
 ```
-- **Expected output:** Hyper-V 1, AWS 1, GCP 1
-- **Instructor says:** "Tags say where each machine lives. The agent's detected cloud confirms AWS and GCP; Hyper-V shows N/A. Tags are claims; validate them."
+- **Expected output:** AWS 1, GCP 1, plus pre-existing servers as Untagged (e.g. arcs-lab-hybrid-prod-cus-01)
+- **Instructor says:** "Tags say where each machine lives. The agent's detected cloud confirms AWS and GCP; the private lab server shows N/A and no CloudOrigin tag, which is exactly what an untagged on-premises server looks like. Tags are claims; validate them."
 - **Audience should notice:** Tag vs detected-cloud consistency.
 - **What can fail:** Untagged machine.
 - **Recovery action:** az tag update --operation merge.
@@ -195,7 +196,7 @@ az graph query -q "$(sed s/'<AZURE_RESOURCE_GROUP>'/$AZURE_RESOURCE_GROUP/ queri
 az graph query -q "$(sed s/'<AZURE_RESOURCE_GROUP>'/$AZURE_RESOURCE_GROUP/ queries/extension-inventory.kql)" -o table
 az graph query -q "$(sed s/'<AZURE_RESOURCE_GROUP>'/$AZURE_RESOURCE_GROUP/ queries/policy-state.kql)" -o table
 ```
-- **Expected output:** AzureMonitorLinuxAgent Succeeded ×3; baseline audit Compliant/NonCompliant per machine
+- **Expected output:** AzureMonitorLinuxAgent Succeeded ×2; baseline audit Compliant/NonCompliant per machine
 - **Instructor says:** "Policy installed the monitoring agent on all three via DeployIfNotExists, including the one on my laptop."
 - **Audience should notice:** Governance applied uniformly to non-Azure machines.
 - **What can fail:** Extension still provisioning (policy DINE up to ~30 min).
@@ -215,7 +216,7 @@ for a in arc-demo-linux-ama arc-demo-linux-dcr; do az policy remediation create 
 ```
 az monitor log-analytics query -w $LAW_CUSTOMER_ID --analytics-query "$(cat queries/arc-health.kql)" -o table
 ```
-- **Expected output:** healthy ×3 with LastSeen within 2 min
+- **Expected output:** healthy ×2 with LastSeen within 2 min
 - **Instructor says:** "This is THE health test. We will run this exact query again after the fault and again after the fix."
 - **Audience should notice:** Same query = same truth.
 - **What can fail:** No rows (ingestion lag).
@@ -223,18 +224,18 @@ az monitor log-analytics query -w $LAW_CUSTOMER_ID --analytics-query "$(cat quer
 - **Verification command:** `Same query`
 - **Switch to backup:** Backup/02 if Log Analytics unavailable.
 
-## 15. Safe fault injection on arc-hyperv-demo
+## 15. Safe fault injection on arc-aws-demo
 
-- **Environment:** Hyper-V guest console
+- **Environment:** AWS guest via `aws ssm start-session` (no inbound port)
 - **Command:**
 ```
 bash scripts/inject-safe-fault.sh
 ```
-- **Expected output:** Before: healthy; After: unhealthy; 'Fault injected on arc-hyperv-demo. AWS and GCP untouched.'
+- **Expected output:** Before: healthy; After: unhealthy; 'Fault injected on arc-aws-demo. Every other machine untouched.'
 - **Instructor says:** "I am stopping one harmless service on the local machine only. Nothing in AWS or Google Cloud changes."
 - **Audience should notice:** The script refuses to run on any other host.
 - **What can fail:** Script run on wrong host → REFUSED (good).
-- **Recovery action:** Run on the Hyper-V guest.
+- **Recovery action:** Run on the AWS guest; the script refuses anywhere else.
 - **Verification command:** `bash scripts/verify-health.sh → exit 10`
 - **Switch to backup:** Backup from here if the VM is unreachable.
 
@@ -245,7 +246,7 @@ bash scripts/inject-safe-fault.sh
 ```
 export INCIDENT_ID=INC-$(date -u +%Y%m%d-%H%M); bash scripts/collect-evidence.sh
 ```
-- **Expected output:** evidence/incidents/$INCIDENT_ID/evidence.json; health shows arc-hyperv-demo unhealthy; 'Secret scan: clean'
+- **Expected output:** evidence/incidents/$INCIDENT_ID/evidence.json; health shows arc-aws-demo unhealthy; 'Secret scan: clean'
 - **Instructor says:** "Deterministic queries built this package. GUIDs and IPs are already redacted. This is the only thing the AI will see."
 - **Audience should notice:** Curated evidence, not raw logs.
 - **What can fail:** Query failure; secret detected.
@@ -275,7 +276,7 @@ export EVIDENCE_FILE=evidence/incidents/$INCIDENT_ID/evidence.json; export QUEST
 ```
 bash ai/explain-incident.sh | jq .
 ```
-- **Expected output:** JSON: affected_machine arc-hyperv-demo; hosting_origin Hyper-V; evidence_cited [...]; confidence high; requires_human_approval true
+- **Expected output:** JSON: affected_machine arc-aws-demo; hosting_origin AWS; evidence_cited [...]; confidence high; requires_human_approval true
 - **Instructor says:** "Labelled AI-generated. Every sentence cites a path in the evidence. It says what it does not know."
 - **Audience should notice:** Citations; uncertainty; no commands.
 - **What can fail:** Endpoint 401/403 (role); ungrounded answer.
@@ -303,7 +304,7 @@ jq '{proposed_runbook, requires_human_approval}' evidence/incidents/$INCIDENT_ID
 - **Environment:** Browser (GitHub)
 - **Command:**
 ```
-gh workflow run remediate-rb-001 -f target=arc-hyperv-demo -f incident_id=$INCIDENT_ID; then reviewer approves in Actions → environment
+gh workflow run remediate-rb-001 -f target=arc-aws-demo -f incident_id=$INCIDENT_ID; then reviewer approves in Actions → environment
 ```
 - **Expected output:** Job paused 'Waiting for review' → Approved by <reviewer>
 - **Instructor says:** "A named human, who is not me, approves exactly this runbook on exactly this machine. That record is permanent."
@@ -315,16 +316,16 @@ gh workflow run remediate-rb-001 -f target=arc-hyperv-demo -f incident_id=$INCID
 
 ## 21. Deterministic remediation
 
-- **Environment:** GitHub Actions → Azure → Hyper-V guest
+- **Environment:** GitHub Actions → Azure → AWS guest (through Arc)
 - **Command:**
 ```
-(workflow step) az connectedmachine extension create ... CustomScript ... remediate.sh with REMEDIATION_TARGET=arc-hyperv-demo
+(workflow step) az connectedmachine extension create ... CustomScript ... remediate.sh with REMEDIATION_TARGET=arc-aws-demo
 ```
 - **Expected output:** Step succeeds; runbook-hashes.txt artifact
 - **Instructor says:** "Azure Arc delivers the approved script to the local VM through the same extension framework Azure uses for its own VMs. One target, one action."
 - **Audience should notice:** Hash of the script = what was reviewed.
 - **What can fail:** Extension failure; guest offline.
-- **Recovery action:** Lab-only fallback: run `APPROVAL_ID=APR-x REMEDIATION_TARGET=arc-hyperv-demo bash scripts/remediate.sh` in the console after approval; or backup/08.
+- **Recovery action:** Lab-only fallback: run `APPROVAL_ID=APR-x REMEDIATION_TARGET=arc-aws-demo bash scripts/remediate.sh` in the console after approval; or backup/08.
 - **Verification command:** `az connectedmachine extension list`
 - **Switch to backup:** Backup/08.
 
@@ -335,7 +336,7 @@ gh workflow run remediate-rb-001 -f target=arc-hyperv-demo -f incident_id=$INCID
 ```
 az monitor log-analytics query -w $LAW_CUSTOMER_ID --analytics-query "$(cat queries/arc-health.kql)" -o table
 ```
-- **Expected output:** arc-hyperv-demo healthy (after 1–3 min)
+- **Expected output:** arc-aws-demo healthy (after 1–3 min)
 - **Instructor says:** "Same query as before the fault. Only now do we say 'recovered'."
 - **Audience should notice:** unhealthy → healthy transition.
 - **What can fail:** Ingestion lag.
@@ -393,7 +394,7 @@ cd terraform/gcp && terraform destroy -auto-approve
 - **Environment:** Workstation
 - **Command:**
 ```
-az connectedmachine delete -n arc-hyperv-demo -g $AZURE_RESOURCE_GROUP --yes (×3 if guests already gone); cd terraform/azure && terraform destroy -auto-approve
+az connectedmachine delete -n arc-aws-demo -g $AZURE_RESOURCE_GROUP --yes; same for arc-gcp-demo (if guests already gone); cd terraform/azure && terraform destroy -auto-approve
 ```
 - **Expected output:** RG deleted
 - **Instructor says:** —
@@ -403,7 +404,7 @@ az connectedmachine delete -n arc-hyperv-demo -g $AZURE_RESOURCE_GROUP --yes (×
 - **Verification command:** `az group exists -n $AZURE_RESOURCE_GROUP → false`
 - **Switch to backup:** N/A
 
-## 27. Hyper-V VM cleanup
+## 27. Hyper-V VM cleanup (only if step 5 was run)
 
 - **Environment:** Instructor laptop
 - **Command:**
@@ -415,7 +416,7 @@ az connectedmachine delete -n arc-hyperv-demo -g $AZURE_RESOURCE_GROUP --yes (×
 - **Audience should notice:** —
 - **What can fail:** VM locked by console.
 - **Recovery action:** Close vmconnect; retry.
-- **Verification command:** `Get-VM arc-hyperv-demo → error`
+- **Verification command:** `Get-VM arc-aws-demo → error`
 - **Switch to backup:** N/A
 
 ## 28. Credential and temporary-permission removal

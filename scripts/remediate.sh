@@ -12,7 +12,10 @@ REMEDIATION_TARGET="${REMEDIATION_TARGET:-}"
 APPROVAL_ID="${APPROVAL_ID:-}"
 [[ -n "$REMEDIATION_TARGET" ]] || { echo "REFUSED: REMEDIATION_TARGET not set" >&2; exit 1; }
 [[ -n "$APPROVAL_ID" ]]        || { echo "REFUSED: APPROVAL_ID not set (human approval required)" >&2; exit 1; }
-[[ "$(hostname)" == "$REMEDIATION_TARGET" ]] || { echo "REFUSED: host $(hostname) != approved target $REMEDIATION_TARGET" >&2; exit 1; }
+# Identity check: accept the Arc resource name (what Azure calls this machine) or the OS hostname.
+arc_name() { azcmagent show 2>/dev/null | awk -F': *' '/^Resource Name/{print $2; exit}'; }
+me_is() { [[ "$(hostname)" == "$1" || "$(arc_name)" == "$1" ]]; }
+me_is "$REMEDIATION_TARGET" || { echo "REFUSED: host $(hostname) (Arc: $(arc_name)) != approved target $REMEDIATION_TARGET" >&2; exit 1; }
 
 here="$(cd "$(dirname "$0")" && pwd)"
 echo "[$RUNBOOK_ID] approval=$APPROVAL_ID target=$REMEDIATION_TARGET"

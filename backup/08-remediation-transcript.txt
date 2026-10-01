@@ -1,8 +1,8 @@
-$ APPROVAL_ID=APR-20261015-1437 REMEDIATION_TARGET=arc-hyperv-demo ./remediate.sh
-[RB-001] approval=APR-20261015-1437 target=arc-hyperv-demo
+$ APPROVAL_ID=APR-20261015-1437 REMEDIATION_TARGET=arc-aws-demo ./remediate.sh
+[RB-001] approval=APR-20261015-1437 target=arc-aws-demo
 [RB-001] pre-check:
-{"timestamp":"2026-10-15T14:37:41Z","host":"arc-hyperv-demo","service":"arc-demo-health","systemd":"inactive","http":"000","status":"unhealthy"}
+{"timestamp":"2026-10-15T14:37:41Z","host":"arc-aws-demo","service":"arc-demo-health","systemd":"inactive","http":"000","status":"unhealthy"}
 [RB-001] action: systemctl start arc-demo-health.service
 [RB-001] post-check:
-{"timestamp":"2026-10-15T14:37:44Z","host":"arc-hyperv-demo","service":"arc-demo-health","systemd":"active","http":"200","status":"healthy"}
+{"timestamp":"2026-10-15T14:37:44Z","host":"arc-aws-demo","service":"arc-demo-health","systemd":"active","http":"200","status":"healthy"}
 [RB-001] RESULT: recovered

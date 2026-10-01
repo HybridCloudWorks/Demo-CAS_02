@@ -20,16 +20,5 @@
     "agentVersion": "1.68.<redacted>",
     "location": "eastus2",
     "resourceGroup": "rg-arc-hybrid-demo"
-  },
-  {
-    "name": "arc-hyperv-demo",
-    "status": "Connected",
-    "cloudOrigin": "Hyper-V",
-    "detectedCloud": "N/A",
-    "osName": "linux",
-    "osSku": "Ubuntu 24.04.3 LTS",
-    "agentVersion": "1.68.<redacted>",
-    "location": "eastus2",
-    "resourceGroup": "rg-arc-hybrid-demo"
   }
 ]

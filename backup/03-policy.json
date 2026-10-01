@@ -1,11 +1,5 @@
 [
   {
-    "machine": "arc-hyperv-demo",
-    "policy": "<REDACTED_GUID>",
-    "compliance": "Compliant",
-    "evaluated": "2026-10-15T13:50:00Z"
-  },
-  {
     "machine": "arc-aws-demo",
     "policy": "<REDACTED_GUID>",
     "compliance": "Compliant",

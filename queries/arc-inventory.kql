@@ -1,7 +1,7 @@
 // arc-inventory.kql : all Arc-enabled servers in the demo RG with hosting origin. Safe for missing tags.
 resources
 | where type =~ 'microsoft.hybridcompute/machines'
-| where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'
+// scope: whole subscription so every Arc-enabled server shows up; add back `| where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'` to narrow
 | extend cloudOriginTag = tostring(tags['CloudOrigin']),
          environmentTag = tostring(tags['Environment']),
          sessionTag     = tostring(tags['Session']),

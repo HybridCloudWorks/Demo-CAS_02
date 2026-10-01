@@ -1,17 +1,12 @@
 [
   {
     "Computer": "arc-aws-demo",
-    "status": "healthy",
+    "status": "unhealthy",
     "LastSeen": "2026-10-15T14:31:40Z"
   },
   {
     "Computer": "arc-gcp-demo",
     "status": "healthy",
     "LastSeen": "2026-10-15T14:31:44Z"
-  },
-  {
-    "Computer": "arc-hyperv-demo",
-    "status": "unhealthy",
-    "LastSeen": "2026-10-15T14:31:52Z"
   }
 ]

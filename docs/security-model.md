@@ -5,7 +5,7 @@
 2. **Least privilege, scoped to the demo resource group / VPC / project.** No subscription-wide Owner or Contributor.
 3. **The AI layer is read-only.** It receives a sanitized JSON package and returns text. It has no tools, no credentials, no network path to any machine.
 4. **Humans approve; code executes.** The only execution path is `remediate.sh` at a pinned commit, invoked after a GitHub environment approval, scoped to one machine by workflow input *and* by a hostname guard inside the script.
-5. **No inbound management ports by default.** SSM (AWS), IAP + OS Login (GCP), Hyper-V console (local). Public SSH is a labelled lab-only toggle restricted to a CIDR variable.
+5. **No inbound management ports by default.** SSM (AWS), IAP + OS Login (GCP), console on private hosts. Public SSH is a labelled lab-only toggle restricted to a CIDR variable.
 
 ## Roles and identities
 | Where | Identity | Role | Scope | Lifetime |

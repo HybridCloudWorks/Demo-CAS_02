@@ -12,12 +12,5 @@
     "extType": "AzureMonitorLinuxAgent",
     "publisher": "Microsoft.Azure.Monitor",
     "provisioningState": "Succeeded"
-  },
-  {
-    "machine": "arc-hyperv-demo",
-    "name": "AzureMonitorLinuxAgent",
-    "extType": "AzureMonitorLinuxAgent",
-    "publisher": "Microsoft.Azure.Monitor",
-    "provisioningState": "Succeeded"
   }
 ]

@@ -1,10 +1,5 @@
 [
   {
-    "Computer": "arc-hyperv-demo",
-    "status": "healthy",
-    "LastSeen": "2026-10-15T14:39:52Z"
-  },
-  {
     "Computer": "arc-aws-demo",
     "status": "healthy",
     "LastSeen": "2026-10-15T14:39:40Z"

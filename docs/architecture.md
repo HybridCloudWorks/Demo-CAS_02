@@ -2,11 +2,11 @@
 
 ## Narrative
 
-Three Linux servers run in three places and never leave them: **arc-hyperv-demo** on a Hyper-V host (local / private infrastructure), **arc-aws-demo** on Amazon EC2, and **arc-gcp-demo** on Google Compute Engine. Each runs Ubuntu 24.04 LTS, a harmless demo service (`arc-demo-health`, a local-only HTTP health endpoint) and a one-minute heartbeat that writes the service state to syslog.
+Linux servers run in three kinds of place and never leave them: **arc-aws-demo** on Amazon EC2, **arc-gcp-demo** on Google Compute Engine, and private infrastructure, represented in the CAS 2026 delivery by the pre-existing Arc server **arcs-lab-hybrid-prod-cus-01** (KVM lab host; read-only in the session) and optionally by **arc-hyperv-demo** on a Hyper-V laptop. Each runs Ubuntu 24.04 LTS, a harmless demo service (`arc-demo-health`, a local-only HTTP health endpoint) and a one-minute heartbeat that writes the service state to syslog.
 
 Azure Arc gives each machine an **Azure resource identity** (`Microsoft.HybridCompute/machines`) in one resource group. That identity is what lets Azure tools treat the three machines as one fleet: tags (`CloudOrigin`), Resource Graph inventory, Azure Policy / Machine Configuration, Azure Monitor Agent with a Data Collection Rule into Log Analytics, and the Arc extension framework used for the approved remediation. Arc does **not** move, migrate, or host the machines; AWS and Google Cloud keep their own identity, networking and billing; and an ordinary Azure VM already has all of this natively, so it is not Arc-enabled.
 
-The incident lifecycle is **Detect → Explain → Approve → Remediate → Verify → Document**:
+The live fault runs on **arc-aws-demo**. The incident lifecycle is **Detect → Explain → Approve → Remediate → Verify → Document**:
 
 | Stage | Deterministic component | Owner |
 |---|---|---|

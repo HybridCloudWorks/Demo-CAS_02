@@ -1,10 +1,10 @@
-# Azure Arc: one control plane for Hyper-V, AWS and Google Cloud
+# Azure Arc: one control plane for AWS, Google Cloud and private infrastructure
 
-Session repository for the Cloud & AI Summit 2026 two-hour instructor-led session **"One control plane. Three hosting locations."** — a single hybrid incident lifecycle, **Detect → Explain → Approve → Remediate → Verify → Document**, across three Ubuntu servers:
+Session repository for the Cloud & AI Summit 2026 two-hour instructor-led session **"One control plane. Three hosting locations."** — a single hybrid incident lifecycle, **Detect → Explain → Approve → Remediate → Verify → Document**, across Ubuntu servers in three hosting locations (the live fault runs on `arc-aws-demo`; Hyper-V is an optional path kept under `powershell/`):
 
 | Machine | Where it runs | How it is built | How it is managed |
 |---|---|---|---|
-| `arc-hyperv-demo` | Local Hyper-V (instructor laptop) | PowerShell (`powershell/`) | Azure Arc |
+| `arcs-lab-hybrid-prod-cus-01` | Private lab (KVM host, pre-existing) | Already connected; read-only in the session | Azure Arc |
 | `arc-aws-demo` | Amazon EC2 | Terraform (`terraform/aws`) | Azure Arc |
 | `arc-gcp-demo` | Google Compute Engine | Terraform (`terraform/gcp`) | Azure Arc |
 
@@ -37,7 +37,7 @@ Deviations from the requested structure: `ai/` holds the model prompt, evaluatio
 ## Quick commands
 ```
 # Azure prerequisites            cd terraform/azure && terraform init && terraform apply
-# Hyper-V VM                     powershell/New-ArcHyperVVM.ps1 -SwitchName 'Default Switch' -IsoPath <LINUX_IMAGE_PATH> -VmPath <HYPERV_VM_PATH>
+# Hyper-V VM (optional)          powershell/New-ArcHyperVVM.ps1 -SwitchName 'Default Switch' -IsoPath <LINUX_IMAGE_PATH> -VmPath <HYPERV_VM_PATH>
 # AWS / GCP VMs                  cd terraform/aws && terraform apply ; cd terraform/gcp && terraform apply
 # Onboard (in each guest)        sudo -E bash scripts/onboard-arc.sh
 # Health (same query always)     az monitor log-analytics query -w $LAW_CUSTOMER_ID --analytics-query "$(cat queries/arc-health.kql)" -o table
