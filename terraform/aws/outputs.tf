@@ -16,7 +16,7 @@ output "public_ip" {
 
 output "ami_id" {
   description = "Resolved Ubuntu 24.04 AMI."
-  value       = data.aws_ssm_parameter.ubuntu.value
+  value       = data.aws_ami.ubuntu.id
 }
 
 output "ssm_session_command" {

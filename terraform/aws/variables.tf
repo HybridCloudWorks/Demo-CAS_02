@@ -33,10 +33,16 @@ variable "instance_type" {
   }
 }
 
-variable "ubuntu_ssm_parameter" {
-  description = "Canonical public SSM parameter that resolves to the current Ubuntu 24.04 LTS AMI for this region."
+variable "ubuntu_ami_owner" {
+  description = "AWS account ID that publishes Ubuntu AMIs (Canonical: 099720109477)."
   type        = string
-  default     = "/aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id"
+  default     = "099720109477"
+}
+
+variable "ubuntu_ami_name_pattern" {
+  description = "AMI name pattern for the current Ubuntu 24.04 LTS (Noble) x86-64 gp3 server image."
+  type        = string
+  default     = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
 }
 
 variable "vpc_cidr" {

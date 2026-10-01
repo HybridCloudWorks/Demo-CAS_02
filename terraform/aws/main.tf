@@ -10,9 +10,29 @@ locals {
   }
 }
 
-# Current Ubuntu 24.04 LTS AMI published by Canonical through a public SSM parameter.
-data "aws_ssm_parameter" "ubuntu" {
-  name = var.ubuntu_ssm_parameter
+# Current Ubuntu 24.04 LTS AMI published by Canonical (owner 099720109477), resolved by name pattern.
+# The public SSM parameter path was not resolvable in the demo account (ParameterNotFound, Oct 2026),
+# so the AMI is looked up directly; lifecycle.ignore_changes on the instance still pins the day-of image.
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = [var.ubuntu_ami_owner]
+
+  filter {
+    name   = "name"
+    values = [var.ubuntu_ami_name_pattern]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
 }
 
 data "aws_availability_zones" "available" {
@@ -136,7 +156,7 @@ resource "aws_key_pair" "optional" {
 
 # ---------------------------------------------------------------- compute
 resource "aws_instance" "demo" {
-  ami                         = data.aws_ssm_parameter.ubuntu.value
+  ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
   subnet_id                   = aws_subnet.public.id
   vpc_security_group_ids      = [aws_security_group.demo.id]

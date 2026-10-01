@@ -144,13 +144,13 @@ resource "azurerm_role_assignment" "tag_modify_rg" {
 # ---------------------------------------------------------------- optional AI layer
 # Verification required against current official documentation: resource name/kind for Microsoft Foundry in azurerm 5.x.
 resource "azurerm_cognitive_account" "foundry" {
-  count               = var.deploy_foundry ? 1 : 0
-  name                = var.foundry_name
-  location            = azurerm_resource_group.demo.location
-  resource_group_name = azurerm_resource_group.demo.name
-  kind                = "AIServices"
-  sku_name            = "S0"
+  count                 = var.deploy_foundry ? 1 : 0
+  name                  = var.foundry_name
+  location              = azurerm_resource_group.demo.location
+  resource_group_name   = azurerm_resource_group.demo.name
+  kind                  = "AIServices"
+  sku_name              = "S0"
   custom_subdomain_name = var.foundry_name
-  local_auth_enabled  = false # Entra ID only; no API keys
-  tags                = local.common_tags
+  local_auth_enabled    = false # Entra ID only; no API keys
+  tags                  = local.common_tags
 }
