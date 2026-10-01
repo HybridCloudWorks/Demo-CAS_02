@@ -39,3 +39,6 @@ Thumbs.db
 *.iso
 *.vhdx
 *.img
+
+# Presentation assets (kept local; not published to the repo)
+slides/
