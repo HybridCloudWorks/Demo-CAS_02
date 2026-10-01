@@ -41,7 +41,7 @@ echo "Agent: $(azcmagent version | head -1)"
 azcmagent config set incomingconnections.enabled false >/dev/null 2>&1 || true   # verification required
 azcmagent config set guestconfiguration.enabled true   >/dev/null 2>&1 || true   # verification required
 
-if azcmagent show 2>/dev/null | grep -qi 'Agent Status.*Connected'; then
+if azcmagent show 2>/dev/null | grep -Eqi 'Agent Status[[:space:]]*:[[:space:]]*Connected'; then
   echo "Already connected:"; azcmagent show | grep -Ei 'Resource Name|Resource Group|Agent Status'; exit 0
 fi
 
