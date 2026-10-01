@@ -44,7 +44,7 @@ jobs:
       - name: Verify runbook integrity (hash of the approved script at this commit)
         run: sha256sum scripts/remediate.sh scripts/verify-health.sh | tee runbook-hashes.txt
 
-      - name: Execute RB-001 via Arc Custom Script Extension (scope: single machine)
+      - name: "Execute RB-001 via Arc Custom Script Extension (scope: single machine)"
         run: |
           set -euo pipefail
           az extension add --name connectedmachine --only-show-errors

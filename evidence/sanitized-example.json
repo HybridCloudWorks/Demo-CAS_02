@@ -20,9 +20,9 @@
     { "machine": "arc-hyperv-demo", "name": "AzureMonitorLinuxAgent", "extType": "AzureMonitorLinuxAgent", "publisher": "Microsoft.Azure.Monitor", "provisioningState": "Succeeded" }
   ],
   "policy_state": [
-    { "machine": "arc-hyperv-demo", "policy": "fc9b3da7-8347-4380-8e70-0a0361d8dedd", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" },
-    { "machine": "arc-aws-demo",    "policy": "fc9b3da7-8347-4380-8e70-0a0361d8dedd", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" },
-    { "machine": "arc-gcp-demo",    "policy": "fc9b3da7-8347-4380-8e70-0a0361d8dedd", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" }
+    { "machine": "arc-hyperv-demo", "policy": "<REDACTED_GUID>", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" },
+    { "machine": "arc-aws-demo",    "policy": "<REDACTED_GUID>", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" },
+    { "machine": "arc-gcp-demo",    "policy": "<REDACTED_GUID>", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" }
   ],
   "health": [
     { "Computer": "arc-aws-demo",    "status": "healthy",   "LastSeen": "2026-10-15T14:31:40Z" },
