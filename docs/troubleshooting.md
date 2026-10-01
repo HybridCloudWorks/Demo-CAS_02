@@ -14,7 +14,7 @@ Format: **Symptom → Check → Fix → If still failing**. Switch to the backup
 
 ## AWS
 - **Authentication failure** → `aws sts get-caller-identity` → `aws sso login --profile <AWS_PROFILE>`; check `AWS_PROFILE` export → use backup for the AWS column.
-- **Region mismatch** → `aws configure get region`, tfvars `aws_region` → align; SSM parameter is region-specific.
+- **Region mismatch** → `aws configure get region`, tfvars `aws_region` → align; the AMI lookup (data.aws_ami, Canonical owner 099720109477) is region-specific.
 - **Instance quota** → `aws service-quotas get-service-quota --service-code ec2 --quota-code L-1216C47A` → use t3a.micro or another region.
 - **Image lookup failure** → `aws ssm get-parameter --name /aws/service/canonical/ubuntu/server/24.04/stable/current/amd64/hvm/ebs-gp3/ami-id` → fall back to `data "aws_ami"` filter in README.
 - **SSM unavailable** → `aws ssm describe-instance-information` empty → wait 2–3 min after boot; check instance profile and egress 443; Session Manager plugin installed on workstation.

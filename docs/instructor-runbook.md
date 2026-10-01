@@ -90,7 +90,7 @@ cd terraform/aws && terraform apply tfplan && terraform output
 - **Expected output:** Apply complete; outputs instance_id, ssm_session_command (public_ip is sensitive)
 - **Instructor says:** "One t3.micro in a dedicated VPC, egress-only security group, SSM instance profile, IMDSv2. No inbound SSH by default."
 - **Audience should notice:** No public management port; identity via instance role.
-- **What can fail:** Quota, AMI parameter lookup, region mismatch.
+- **What can fail:** Quota, Canonical AMI lookup, region mismatch.
 - **Recovery action:** Troubleshooting: AWS section.
 - **Verification command:** `aws ssm describe-instance-information --query 'InstanceInformationList[].PingStatus'`
 - **Switch to backup:** If apply fails, AWS column comes from backup; demo still works (fault is on Hyper-V).
