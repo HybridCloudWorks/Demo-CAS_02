@@ -199,7 +199,12 @@ az graph query -q "$(sed s/'<AZURE_RESOURCE_GROUP>'/$AZURE_RESOURCE_GROUP/ queri
 - **Instructor says:** "Policy installed the monitoring agent on all three via DeployIfNotExists, including the one on my laptop."
 - **Audience should notice:** Governance applied uniformly to non-Azure machines.
 - **What can fail:** Extension still provisioning (policy DINE up to ~30 min).
-- **Recovery action:** Pre-stage the day before; or `az connectedmachine extension create` manually.
+- **Recovery action:** Pre-stage the day before. Fastest honest fix that keeps the story true (policy did the install): force the evaluation and a remediation task right after onboarding:
+```
+az policy state trigger-scan -g $AZURE_RESOURCE_GROUP --no-wait
+for a in arc-demo-linux-ama arc-demo-linux-dcr; do az policy remediation create -g $AZURE_RESOURCE_GROUP -n rem-$a --policy-assignment "$(az policy assignment show -g $AZURE_RESOURCE_GROUP -n $a --query id -o tsv)" --resource-discovery-mode ReEvaluateCompliance; done
+```
+  AMA lands in 3–10 minutes. Last resort: `az connectedmachine extension create` manually (say so on stage). Git Bash users: set `MSYS_NO_PATHCONV=1` or resource-ID arguments get rewritten as Windows paths.
 - **Verification command:** `Extension query`
 - **Switch to backup:** Use backup/03 and /04.
 
