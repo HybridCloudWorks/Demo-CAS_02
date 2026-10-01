@@ -1,0 +1,43 @@
+%%{init: {"theme":"base","themeVariables":{"primaryColor":"#12264a","primaryTextColor":"#f2f6ff","primaryBorderColor":"#5aa0ff","lineColor":"#9cc3ff","secondaryColor":"#0d1d3a","tertiaryColor":"#0d1d3a","clusterBkg":"#0b1830","clusterBorder":"#3b6cb3","edgeLabelBackground":"#0b1830","fontFamily":"Segoe UI, Arial","fontSize":"16px"}, "flowchart":{"nodeSpacing":28,"rankSpacing":40,"curve":"basis"}}}%%
+flowchart LR
+  subgraph LOCAL["LOCAL · Hyper-V host"]
+    HV["arc-hyperv-demo<br/>Ubuntu 24.04 · Gen 2<br/>Arc agent · demo service"]
+  end
+  subgraph AWS["AWS account"]
+    EC2["arc-aws-demo<br/>EC2 t3.micro · SSM<br/>Arc agent · demo service"]
+  end
+  subgraph GCP["Google Cloud project"]
+    GCE["arc-gcp-demo<br/>GCE e2-micro · IAP<br/>Arc agent · demo service"]
+  end
+  subgraph AZ["AZURE · rg-arc-hybrid-demo"]
+    ARC["Azure Arc-enabled Servers<br/>3 resources · CloudOrigin tags"]
+    ARG["Resource Graph"]
+    POL["Policy / Machine Config"]
+    LAW["AMA + DCR → Log Analytics"]
+    EVD["Curated evidence (JSON)"]
+    AI["Foundry model<br/>explain + propose"]
+  end
+  subgraph GH["GITHUB · source control + approval"]
+    RB["RB-001 remediate.sh<br/>@ pinned commit"]
+    APP["Human approval<br/>required reviewer"]
+    WF["Workflow (OIDC)"]
+    DOC["Incident record / PR"]
+  end
+  HV -- "management" --> ARC
+  EC2 -- "management" --> ARC
+  GCE -- "management" --> ARC
+  HV -. "telemetry" .-> LAW
+  EC2 -. "telemetry" .-> LAW
+  GCE -. "telemetry" .-> LAW
+  ARC --> ARG
+  ARC --> POL
+  ARG -- "evidence" --> EVD
+  LAW -- "evidence" --> EVD
+  EVD -- "evidence" --> AI
+  AI -- "proposal" --> APP
+  APP == "approval" ==> WF
+  RB == "execution" ==> WF
+  WF == "execution (1 target)" ==> ARC
+  ARC == "execution" ==> HV
+  LAW -- "verification" --> DOC
+  APP -- "approval record" --> DOC

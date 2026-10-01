@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars (git-ignored). Placeholders only. Never commit real values.
+aws_profile      = "<AWS_PROFILE>"
+aws_region       = "<AWS_REGION>"
+instance_name    = "arc-aws-demo"
+instance_type    = "t3.micro"
+owner            = "<OWNER>"
+cost_center      = "<COST_CENTER>"
+expiration_date  = "<EXPIRATION_DATE>"
+
+# Lab-only shortcut. Not recommended for production.
+allow_public_ssh    = false
+ssh_allowed_cidr    = "<INSTRUCTOR_PUBLIC_IP>/32"
+ssh_public_key_path = ""   # e.g. "<SSH_PUBLIC_KEY_PATH>" (public key only)

@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars (git-ignored). Placeholders only. Never commit real values.
+gcp_project_id  = "<GCP_PROJECT_ID>"
+gcp_region      = "<GCP_REGION>"
+gcp_zone        = "<GCP_ZONE>"
+instance_name   = "arc-gcp-demo"
+machine_type    = "e2-micro"
+owner           = "<OWNER>"           # lowercase for GCP labels
+cost_center     = "<COST_CENTER>"     # lowercase for GCP labels
+expiration_date = "<EXPIRATION_DATE>" # YYYY-MM-DD
+
+# Lab-only shortcut. Not recommended for production.
+allow_public_ssh = false
+ssh_allowed_cidr = "<INSTRUCTOR_PUBLIC_IP>/32"

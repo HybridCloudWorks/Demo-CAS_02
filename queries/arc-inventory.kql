@@ -1,0 +1,16 @@
+// arc-inventory.kql : all Arc-enabled servers in the demo RG with hosting origin. Safe for missing tags.
+resources
+| where type =~ 'microsoft.hybridcompute/machines'
+| where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'
+| extend cloudOriginTag = tostring(tags['CloudOrigin']),
+         environmentTag = tostring(tags['Environment']),
+         sessionTag     = tostring(tags['Session']),
+         detectedCloud  = tostring(properties.detectedProperties.cloudprovider),   // verification required: property path/values
+         status         = tostring(properties.status),
+         agentVersion   = tostring(properties.agentVersion),
+         osName         = tostring(properties.osName),
+         osSku          = tostring(properties.osSku),
+         lastStatusChange = todatetime(properties.lastStatusChange)
+| extend cloudOrigin = iif(isempty(cloudOriginTag), 'Untagged', cloudOriginTag)
+| project name, status, cloudOrigin, detectedCloud, environmentTag, sessionTag, osName, osSku, agentVersion, lastStatusChange, resourceGroup, location, id
+| order by cloudOrigin asc, name asc

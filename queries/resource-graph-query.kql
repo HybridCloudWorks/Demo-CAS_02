@@ -1,0 +1,25 @@
+// resource-graph-query.kql : before/after comparison views for the demo.
+// 1) Fleet comparison by hosting origin (expected: Hyper-V=1, AWS=1, GCP=1, all Connected)
+resources
+| where type =~ 'microsoft.hybridcompute/machines'
+| where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'
+| extend cloudOrigin = coalesce(tostring(tags['CloudOrigin']), 'Untagged'),
+         status = tostring(properties.status)
+| summarize machines = count(), connected = countif(status =~ 'Connected'),
+            names = make_list(name) by cloudOrigin
+| order by cloudOrigin asc
+
+// 2) Disconnected / expired machines (expected: none during the demo; the fault does NOT disconnect the agent)
+// resources
+// | where type =~ 'microsoft.hybridcompute/machines'
+// | where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'
+// | where tostring(properties.status) !~ 'Connected'
+// | project name, status = tostring(properties.status), lastStatusChange = todatetime(properties.lastStatusChange), cloudOrigin = tostring(tags['CloudOrigin'])
+
+// 3) Tag validation: machines whose CloudOrigin tag disagrees with the agent's detected cloud (tags are claims, not proof)
+// resources
+// | where type =~ 'microsoft.hybridcompute/machines'
+// | where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'
+// | extend tag = tostring(tags['CloudOrigin']), detected = tostring(properties.detectedProperties.cloudprovider)
+// | where (tag =~ 'AWS' and detected !~ 'AWS') or (tag =~ 'GCP' and detected !~ 'GCP')
+// | project name, tag, detected

@@ -1,0 +1,11 @@
+// extension-inventory.kql : extensions installed on each Arc machine (AMA, CustomScript, etc.).
+resources
+| where type =~ 'microsoft.hybridcompute/machines/extensions'
+| where resourceGroup =~ '<AZURE_RESOURCE_GROUP>'
+| extend machine = tostring(split(id, '/')[8]),
+         extType = tostring(properties.type),
+         publisher = tostring(properties.publisher),
+         provisioningState = tostring(properties.provisioningState),
+         extVersion = tostring(properties.typeHandlerVersion)
+| project machine, name, extType, publisher, extVersion, provisioningState
+| order by machine asc, name asc

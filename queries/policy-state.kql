@@ -1,0 +1,13 @@
+// policy-state.kql : latest Azure Policy compliance per Arc machine in the demo RG.
+// Table/type names: verification required against current official documentation.
+policyresources
+| where type =~ 'microsoft.policyinsights/policystates'
+| where tostring(properties.resourceType) =~ 'microsoft.hybridcompute/machines'
+| where tostring(properties.resourceGroup) =~ '<AZURE_RESOURCE_GROUP>'
+| extend machine = tostring(split(tostring(properties.resourceId), '/')[-1]),
+         policy  = tostring(properties.policyDefinitionName),
+         compliance = tostring(properties.complianceState),
+         evaluated  = todatetime(properties.timestamp)
+| summarize arg_max(evaluated, compliance) by machine, policy
+| project machine, policy, compliance, evaluated
+| order by machine asc, policy asc

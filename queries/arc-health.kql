@@ -1,0 +1,11 @@
+// arc-health.kql : latest demo-service health per machine from the syslog heartbeat (Azure Monitor Agent + DCR).
+// Same query is used BEFORE the fault, to DETECT it, and to VERIFY recovery.
+Syslog
+| where TimeGenerated > ago(30m)
+| where ProcessName == 'arc-demo-health'
+| extend status = extract(@'status=(\w+)', 1, SyslogMessage),
+         svc    = extract(@'service=([\w-]+)', 1, SyslogMessage)
+| where svc == 'arc-demo-health'
+| summarize arg_max(TimeGenerated, status) by Computer
+| project Computer, status, LastSeen = TimeGenerated
+| order by Computer asc

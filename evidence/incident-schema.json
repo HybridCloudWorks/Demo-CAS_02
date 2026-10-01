@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hcw-architect/Demo-CAS_02/evidence/incident-schema.json",
+  "title": "Arc hybrid incident evidence package and record",
+  "type": "object",
+  "required": ["incident_id", "collected_at", "schema_version", "sources", "inventory", "health", "approved_runbooks"],
+  "properties": {
+    "incident_id": { "type": "string", "pattern": "^INC-[0-9]{8}-[0-9]{4}$" },
+    "collected_at": { "type": "string", "format": "date-time" },
+    "collector": { "type": "string" },
+    "schema_version": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": { "type": "object", "required": ["name", "query"], "properties": { "name": { "enum": ["azure_resource_graph", "log_analytics", "local_health_check"] }, "query": { "type": "string" } } }
+    },
+    "inventory": {
+      "type": "array",
+      "items": { "type": "object", "required": ["name", "status", "cloudOrigin"],
+        "properties": { "name": { "type": "string" }, "status": { "type": "string" }, "cloudOrigin": { "enum": ["Hyper-V", "AWS", "GCP", "Untagged"] },
+          "detectedCloud": { "type": "string" }, "osName": { "type": "string" }, "agentVersion": { "type": "string" }, "location": { "type": "string" } } }
+    },
+    "extensions": { "type": "array" },
+    "policy_state": { "type": "array" },
+    "health": {
+      "type": "array",
+      "items": { "type": "object", "required": ["Computer", "status", "LastSeen"], "properties": { "Computer": { "type": "string" }, "status": { "enum": ["healthy", "unhealthy", "remediated"] }, "LastSeen": { "type": "string" } } }
+    },
+    "approved_runbooks": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "title", "path", "scope", "requires_approval"],
+        "properties": { "id": { "type": "string" }, "title": { "type": "string" }, "path": { "type": "string" }, "scope": { "type": "string" }, "requires_approval": { "const": true } } }
+    },
+    "ai_explanation": {
+      "type": "object", "description": "AI-GENERATED. Advisory only.",
+      "required": ["affected_machine", "hosting_origin", "summary", "evidence_cited", "confidence", "limitations", "proposed_runbook"],
+      "properties": { "affected_machine": { "type": "string" }, "hosting_origin": { "type": "string" }, "summary": { "type": "string" },
+        "evidence_cited": { "type": "array", "items": { "type": "string" } }, "confidence": { "enum": ["low", "medium", "high"] },
+        "limitations": { "type": "string" }, "proposed_runbook": { "type": "string" }, "generated_by": { "type": "string" } }
+    },
+    "change_proposal": {
+      "type": "object", "description": "AI-GENERATED draft. Executes nothing.",
+      "required": ["runbook_id", "target", "action", "validation", "rollback", "requires_human_approval"],
+      "properties": { "runbook_id": { "type": "string" }, "target": { "type": "string" }, "action": { "type": "string" }, "validation": { "type": "string" }, "rollback": { "type": "string" }, "requires_human_approval": { "const": true } }
+    },
+    "approval": {
+      "type": "object", "required": ["approval_id", "approved_by", "approved_at", "platform", "scope"],
+      "properties": { "approval_id": { "type": "string" }, "approved_by": { "type": "string" }, "approved_at": { "type": "string", "format": "date-time" }, "platform": { "type": "string" }, "scope": { "type": "string" }, "reference": { "type": "string" } }
+    },
+    "execution": {
+      "type": "object", "required": ["runbook_id", "commit_sha", "target", "started_at", "finished_at", "result"],
+      "properties": { "runbook_id": { "type": "string" }, "commit_sha": { "type": "string" }, "target": { "type": "string" }, "started_at": { "type": "string" }, "finished_at": { "type": "string" }, "result": { "enum": ["recovered", "not_recovered", "refused"] }, "executed_via": { "type": "string" } }
+    },
+    "verification": {
+      "type": "object", "required": ["query", "before", "after"],
+      "properties": { "query": { "type": "string" }, "before": { "type": "array" }, "after": { "type": "array" } }
+    },
+    "redaction": { "type": "string" }
+  }
+}

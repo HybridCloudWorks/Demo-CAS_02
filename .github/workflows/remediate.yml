@@ -1,0 +1,66 @@
+# Human-approved, deterministic remediation (RB-001) against ONE named Arc machine.
+# Approval gate = GitHub environment "remediation-approval" with required reviewers (configure in repo settings;
+# prevent self-review). Auth to Azure = OIDC federated credential, no stored secret.
+# Execution path (GA): Azure Arc Custom Script Extension runs scripts/remediate.sh from this pinned commit.
+# Exact az connectedmachine extension settings: verification required against current official documentation.
+name: remediate-rb-001
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Arc machine to remediate (exactly one)'
+        required: true
+        default: 'arc-hyperv-demo'
+        type: choice
+        options: ['arc-hyperv-demo']
+      incident_id:
+        description: 'Incident ID from collect-evidence.sh'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  approve-and-remediate:
+    runs-on: ubuntu-latest
+    environment: remediation-approval
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record approval (who approved is captured by the environment protection rule)
+        run: |
+          echo "APPROVAL_ID=APR-${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
+          echo "Approved execution of RB-001 on ${{ inputs.target }} for ${{ inputs.incident_id }} at $(date -u +%FT%TZ)"
+
+      - name: Azure login (OIDC, no secret)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify runbook integrity (hash of the approved script at this commit)
+        run: sha256sum scripts/remediate.sh scripts/verify-health.sh | tee runbook-hashes.txt
+
+      - name: Execute RB-001 via Arc Custom Script Extension (scope: single machine)
+        run: |
+          set -euo pipefail
+          az extension add --name connectedmachine --only-show-errors
+          RAW="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${GITHUB_SHA}/scripts"
+          az connectedmachine extension create \
+            --name rb001-remediate \
+            --machine-name "${{ inputs.target }}" \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --location "${{ vars.AZURE_LOCATION }}" \
+            --publisher Microsoft.Azure.Extensions --type CustomScript --type-handler-version 2.1 \
+            --settings "{\"fileUris\":[\"${RAW}/remediate.sh\",\"${RAW}/verify-health.sh\"],\"commandToExecute\":\"chmod +x remediate.sh verify-health.sh && APPROVAL_ID=${APPROVAL_ID} REMEDIATION_TARGET=${{ inputs.target }} ./remediate.sh\"}" \
+            --only-show-errors
+          az connectedmachine extension delete --name rb001-remediate --machine-name "${{ inputs.target }}" --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" --yes --only-show-errors
+
+      - name: Upload execution record
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.incident_id }}-execution
+          path: runbook-hashes.txt

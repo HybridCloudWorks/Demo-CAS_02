@@ -1,0 +1,76 @@
+{
+  "incident_id": "INC-20261015-1432",
+  "collected_at": "2026-10-15T14:32:10Z",
+  "collector": "collect-evidence.sh",
+  "schema_version": "1.0",
+  "sources": [
+    { "name": "azure_resource_graph", "query": "queries/arc-inventory.kql" },
+    { "name": "azure_resource_graph", "query": "queries/extension-inventory.kql" },
+    { "name": "azure_resource_graph", "query": "queries/policy-state.kql" },
+    { "name": "log_analytics", "query": "queries/arc-health.kql" }
+  ],
+  "inventory": [
+    { "name": "arc-aws-demo",    "status": "Connected", "cloudOrigin": "AWS",     "detectedCloud": "AWS", "osName": "linux", "osSku": "Ubuntu 24.04.3 LTS", "agentVersion": "1.68.<redacted>", "location": "eastus2", "resourceGroup": "rg-arc-hybrid-demo" },
+    { "name": "arc-gcp-demo",    "status": "Connected", "cloudOrigin": "GCP",     "detectedCloud": "GCP", "osName": "linux", "osSku": "Ubuntu 24.04.3 LTS", "agentVersion": "1.68.<redacted>", "location": "eastus2", "resourceGroup": "rg-arc-hybrid-demo" },
+    { "name": "arc-hyperv-demo", "status": "Connected", "cloudOrigin": "Hyper-V", "detectedCloud": "N/A", "osName": "linux", "osSku": "Ubuntu 24.04.3 LTS", "agentVersion": "1.68.<redacted>", "location": "eastus2", "resourceGroup": "rg-arc-hybrid-demo" }
+  ],
+  "extensions": [
+    { "machine": "arc-aws-demo",    "name": "AzureMonitorLinuxAgent", "extType": "AzureMonitorLinuxAgent", "publisher": "Microsoft.Azure.Monitor", "provisioningState": "Succeeded" },
+    { "machine": "arc-gcp-demo",    "name": "AzureMonitorLinuxAgent", "extType": "AzureMonitorLinuxAgent", "publisher": "Microsoft.Azure.Monitor", "provisioningState": "Succeeded" },
+    { "machine": "arc-hyperv-demo", "name": "AzureMonitorLinuxAgent", "extType": "AzureMonitorLinuxAgent", "publisher": "Microsoft.Azure.Monitor", "provisioningState": "Succeeded" }
+  ],
+  "policy_state": [
+    { "machine": "arc-hyperv-demo", "policy": "fc9b3da7-8347-4380-8e70-0a0361d8dedd", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" },
+    { "machine": "arc-aws-demo",    "policy": "fc9b3da7-8347-4380-8e70-0a0361d8dedd", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" },
+    { "machine": "arc-gcp-demo",    "policy": "fc9b3da7-8347-4380-8e70-0a0361d8dedd", "compliance": "Compliant", "evaluated": "2026-10-15T13:50:00Z" }
+  ],
+  "health": [
+    { "Computer": "arc-aws-demo",    "status": "healthy",   "LastSeen": "2026-10-15T14:31:40Z" },
+    { "Computer": "arc-gcp-demo",    "status": "healthy",   "LastSeen": "2026-10-15T14:31:44Z" },
+    { "Computer": "arc-hyperv-demo", "status": "unhealthy", "LastSeen": "2026-10-15T14:31:52Z" }
+  ],
+  "approved_runbooks": [
+    { "id": "RB-001", "title": "Restart arc-demo-health", "path": "scripts/remediate.sh", "scope": "single named machine", "requires_approval": true }
+  ],
+  "ai_explanation": {
+    "generated_by": "AI-GENERATED (Microsoft Foundry model, grounded on this package only). Advisory.",
+    "affected_machine": "arc-hyperv-demo",
+    "hosting_origin": "Hyper-V (local). Tag CloudOrigin=Hyper-V; agent detectedCloud=N/A is consistent with a non-public-cloud host.",
+    "summary": "One of three Arc-enabled servers reports the demo service unhealthy. arc-hyperv-demo's latest heartbeat (14:31:52Z) shows status=unhealthy; arc-aws-demo and arc-gcp-demo report healthy within the same minute. The Arc agent on arc-hyperv-demo is still Connected, so this is a service-level failure, not an agent or connectivity failure.",
+    "evidence_cited": [ "health[Computer=arc-hyperv-demo].status=unhealthy @2026-10-15T14:31:52Z", "health[Computer=arc-aws-demo].status=healthy", "health[Computer=arc-gcp-demo].status=healthy", "inventory[name=arc-hyperv-demo].status=Connected" ],
+    "confidence": "high",
+    "limitations": "Heartbeat is one-minute granularity; root cause of the stop is not in the evidence. No action has been taken.",
+    "proposed_runbook": "RB-001"
+  },
+  "change_proposal": {
+    "runbook_id": "RB-001",
+    "target": "arc-hyperv-demo",
+    "action": "Run scripts/remediate.sh (pinned commit) with REMEDIATION_TARGET=arc-hyperv-demo. It starts arc-demo-health.service only.",
+    "validation": "Re-run queries/arc-health.kql; expect arc-hyperv-demo status=healthy within 2 minutes.",
+    "rollback": "None required; start is idempotent. If health does not return, stop the runbook and escalate; do not expand scope.",
+    "requires_human_approval": true
+  },
+  "approval": {
+    "approval_id": "APR-20261015-1437",
+    "approved_by": "<REDACTED_REVIEWER>",
+    "approved_at": "2026-10-15T14:37:05Z",
+    "platform": "GitHub Actions environment: remediation-approval (required reviewer)",
+    "scope": "RB-001 on arc-hyperv-demo only",
+    "reference": "workflow run <REDACTED_RUN_ID>"
+  },
+  "execution": {
+    "runbook_id": "RB-001",
+    "commit_sha": "<REDACTED_SHA>",
+    "target": "arc-hyperv-demo",
+    "executed_via": "Azure Arc Custom Script Extension (GA) invoked by approved workflow",
+    "started_at": "2026-10-15T14:37:40Z",
+    "finished_at": "2026-10-15T14:38:12Z",
+    "result": "recovered"
+  },
+  "verification": {
+    "query": "queries/arc-health.kql",
+    "before": [ { "Computer": "arc-hyperv-demo", "status": "unhealthy", "LastSeen": "2026-10-15T14:31:52Z" } ],
+    "after":  [ { "Computer": "arc-hyperv-demo", "status": "healthy",   "LastSeen": "2026-10-15T14:39:52Z" } ]
+  },
+  "redaction": "GUIDs and IPs replaced before storage"
+}

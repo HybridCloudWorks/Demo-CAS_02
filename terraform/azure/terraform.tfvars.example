@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars (git-ignored). Placeholders only. Never commit real values.
+subscription_id     = "<AZURE_SUBSCRIPTION_ID>"
+tenant_id           = "<AZURE_TENANT_ID>"
+location            = "<AZURE_LOCATION>"
+resource_group_name = "<AZURE_RESOURCE_GROUP>"   # e.g. rg-arc-hybrid-demo
+owner               = "<OWNER>"
+cost_center         = "<COST_CENTER>"
+expiration_date     = "<EXPIRATION_DATE>"
+deploy_policy       = true
+deploy_foundry      = false

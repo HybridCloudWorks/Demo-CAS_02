@@ -1,0 +1,40 @@
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+!*.tfvars.example
+crash.log
+override.tf
+override.tf.json
+
+# Credentials and keys (belt and braces: none should ever be created here)
+*.pem
+*.key
+*.pfx
+*.p12
+id_rsa*
+id_ed25519*
+*.json.key
+service-account*.json
+.env
+.env.*
+!.env.example
+*.credentials
+.aws/
+.azure/
+.config/gcloud/
+
+# Runtime evidence (keep only the sanitized example)
+evidence/incidents/
+!evidence/sanitized-example.json
+
+# Local
+*.log
+.DS_Store
+Thumbs.db
+*.iso
+*.vhdx
+*.img
