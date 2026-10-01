@@ -42,3 +42,6 @@ Thumbs.db
 
 # Presentation assets (kept local; not published to the repo)
 slides/
+
+# Local deployment helper (not part of the kit)
+Deploy-Demo.ps1
