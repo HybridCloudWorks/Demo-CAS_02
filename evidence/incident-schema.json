@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/hcw-architect/Demo-CAS_02/evidence/incident-schema.json",
+  "$id": "https://github.com/HybridCloudWorks/Demo-CAS_02/evidence/incident-schema.json",
   "title": "Arc hybrid incident evidence package and record",
   "type": "object",
   "required": ["incident_id", "collected_at", "schema_version", "sources", "inventory", "health", "approved_runbooks"],

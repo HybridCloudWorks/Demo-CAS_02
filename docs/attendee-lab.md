@@ -7,7 +7,7 @@
 ## 1. Prerequisites
 - A Windows 11 Pro/Enterprise/Education PC with Hyper-V, 16 GB RAM, 60 GB free disk (or skip Hyper-V and use only AWS + GCP).
 - Sandbox Azure subscription (role: *Azure Connected Machine Onboarding* + *Contributor* on **one** resource group), AWS account (sandbox), Google Cloud project (sandbox, billing enabled).
-- GitHub account with a fork of `https://github.com/hcw-architect/Demo-CAS_02`.
+- GitHub account with a fork of `https://github.com/HybridCloudWorks/Demo-CAS_02`.
 
 ## 2. Local tool installation checklist
 `git` · `terraform ≥ 1.9` · `az` (Azure CLI) + `az extension add --name resource-graph --name connectedmachine` · `aws` CLI v2 + Session Manager plugin · `gcloud` CLI · PowerShell 7 · an SSH client · `jq` (or `python3 -m json.tool`).

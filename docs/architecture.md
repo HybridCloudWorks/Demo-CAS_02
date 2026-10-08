@@ -68,7 +68,7 @@ flowchart LR
 
 | Concern | Hyper-V | AWS | Google Cloud | Azure | GitHub |
 |---|---|---|---|---|---|
-| Hosting boundary | Instructor laptop; Default Switch NAT | Dedicated VPC, public subnet, SG egress-only | Dedicated VPC, IAP ingress only | Resource group `rg-arc-hybrid-demo` | Repo `hcw-architect/Demo-CAS_02` |
+| Hosting boundary | Instructor laptop; Default Switch NAT | Dedicated VPC, public subnet, SG egress-only | Dedicated VPC, IAP ingress only | Resource group `rg-arc-hybrid-demo` | Repo `HybridCloudWorks/Demo-CAS_02` |
 | Trust boundary | Local admin on host | AWS IAM (instance role for SSM) | Google IAM (VM service account, OS Login) | Entra ID; Arc machine system-assigned identity | Environment protection rules |
 | Authentication path | Device-code to Entra for `azcmagent connect` | AWS SSO profile (workstation); device-code in guest | ADC (workstation); device-code in guest | `az login` (workstation); OIDC federated credential (workflow) | `gh auth login`; OIDC token |
 | Outbound flows | 443 → Arc endpoints, packages.microsoft.com | 443 → Arc endpoints, SSM endpoints | 443 → Arc endpoints | n/a | 443 → management.azure.com |
