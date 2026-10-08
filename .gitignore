@@ -1,6 +1,5 @@
 # Terraform
 **/.terraform/
-**/.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 *.tfplan
@@ -23,6 +22,7 @@ service-account*.json
 .env
 .env.*
 !.env.example
+demo-settings.psd1
 *.credentials
 .aws/
 .azure/
@@ -42,8 +42,3 @@ Thumbs.db
 
 # Presentation assets (kept local; not published to the repo)
 slides/
-
-# Local deployment helper (not part of the kit)
-Deploy-Demo.ps1
-Setup-ApprovalGate.ps1
-Cleanup-Demo.ps1

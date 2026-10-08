@@ -19,6 +19,7 @@ Arc gives each server an Azure resource identity so tags, Resource Graph, Policy
 ## Repository layout
 ```
 README.md  Publish-Repo.ps1  .gitignore  .env.example
+Deploy-Demo.ps1 · Setup-ApprovalGate.ps1 · Cleanup-Demo.ps1   instructor helpers; copy demo-settings.example.psd1 to demo-settings.psd1 (git-ignored) first
 docs/      architecture · onboarding-decision-matrix · instructor-runbook · attendee-lab · security-model
            troubleshooting · demo-fallback · cleanup · cost-management · proof-of-value · acceptance-tests · preflight-checklist
 slides/    AzureArc-HybridIncident-CAS2026.pptx · slide-outline.md · presenter-notes.md · architecture.png
