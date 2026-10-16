@@ -26,13 +26,16 @@ jobs:
   approve-and-remediate:
     runs-on: ubuntu-latest
     environment: remediation-approval
+    env:
+      # Free-text input: scripts read it from the environment instead of an inline expression (injection).
+      INCIDENT_ID: ${{ inputs.incident_id }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Record approval (who approved is captured by the environment protection rule)
         run: |
           echo "APPROVAL_ID=APR-${GITHUB_RUN_ID}" >> "$GITHUB_ENV"
-          echo "Approved execution of RB-001 on ${{ inputs.target }} for ${{ inputs.incident_id }} at $(date -u +%FT%TZ)"
+          echo "Approved execution of RB-001 on ${{ inputs.target }} for ${INCIDENT_ID} at $(date -u +%FT%TZ)"
 
       - name: Azure login (OIDC, no secret)
         uses: azure/login@v2
@@ -62,5 +65,5 @@ jobs:
       - name: Upload execution record
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.incident_id }}-execution
+          name: ${{ env.INCIDENT_ID }}-execution
           path: runbook-hashes.txt

@@ -11,18 +11,21 @@ Session repository for the Cloud & AI Summit 2026 two-hour instructor-led sessio
 Arc gives each server an Azure resource identity so tags, Resource Graph, Policy, Azure Monitor and the extension framework work the same way for all three. The servers never leave their hosts; AWS and Google Cloud keep their native control planes; an ordinary Azure VM is not Arc-enabled because it already has native management.
 
 ## Start here
-1. `docs/instructor-runbook.md` — 28 steps with commands, expected output, narration, failure modes and backup switch points.
-2. `docs/attendee-lab.md` — reusable lab with cost warnings and knowledge checks.
-3. `slides/AzureArc-HybridIncident-CAS2026.pptx` — the summit deck; `slides/slide-outline.md` and `slides/presenter-notes.md` carry the full specification and talk track.
-4. `docs/demo-fallback.md` + `backup/` — the read-only **Hybrid Estate Briefing**.
+1. [`docs/instructor-runbook.md`](docs/instructor-runbook.md) — 28 steps with commands, expected output, narration, failure modes and backup switch points.
+2. [`docs/attendee-lab.md`](docs/attendee-lab.md) — reusable lab with cost warnings and knowledge checks.
+3. [`docs/demo-fallback.md`](docs/demo-fallback.md) + [`backup/`](backup/) — the read-only **Hybrid Estate Briefing**. The `backup/` artifacts are illustrative: written in advance from the expected outputs, not captured from a live run.
+
+The summit deck and presenter notes are not published in this repository.
+
+## Prerequisites
+Local tools, cloud sign-ins, Azure Arc and workflow checks are listed in the [preflight checklist](docs/preflight-checklist.md) (T-24h and T-60min).
 
 ## Repository layout
 ```
-README.md  Publish-Repo.ps1  .gitignore  .env.example
+README.md  LICENSE  .gitignore  .env.example
 Deploy-Demo.ps1 · Setup-ApprovalGate.ps1 · Cleanup-Demo.ps1   instructor helpers; copy demo-settings.example.psd1 to demo-settings.psd1 (git-ignored) first
 docs/      architecture · onboarding-decision-matrix · instructor-runbook · attendee-lab · security-model
            troubleshooting · demo-fallback · cleanup · cost-management · proof-of-value · acceptance-tests · preflight-checklist
-slides/    AzureArc-HybridIncident-CAS2026.pptx · slide-outline.md · presenter-notes.md · architecture.png
 terraform/ aws/ gcp/ azure/  (versions, providers, variables, main, outputs, terraform.tfvars.example)
 powershell/ Test-HyperVPrerequisites · New-ArcHyperVVM · Get-ArcHyperVVMStatus · Remove-ArcHyperVVM · Remove-AllDemoResources
 scripts/   cloud-init.yaml · preflight · configure-demo-service · onboard-arc · verify-arc · verify-health
@@ -30,10 +33,9 @@ scripts/   cloud-init.yaml · preflight · configure-demo-service · onboard-arc
 queries/   arc-inventory · arc-health · policy-state · extension-inventory · resource-graph-query (.kql)
 evidence/  README · incident-schema.json · sanitized-example.json
 ai/        system-prompt.md · explain-incident.sh · evaluation-set.json
-backup/    captured, sanitized artifacts for the fallback demo
+backup/    illustrative, sanitized artifacts for the fallback demo (written in advance)
 .github/workflows/ remediate.yml (approval-gated RB-001) · secret-scan.yml
 ```
-Deviations from the requested structure: `ai/` holds the model prompt, evaluation set and call script (the AI layer is a separate trust boundary); `backup/` holds captured artifacts; `.github/workflows/` is where the approval gate lives; `scripts/cloud-init.yaml` is shared by all three platforms; `powershell/Remove-AllDemoResources.ps1` and `Publish-Repo.ps1` were added at the instructor's request.
 
 ## Quick commands
 ```
@@ -50,3 +52,9 @@ Deviations from the requested structure: `ai/` holds the model prompt, evaluatio
 
 ## Security
 No secrets, IDs or IPs are stored here. Identity-based authentication everywhere; least privilege at resource-group / VPC / project scope; AI layer is read-only; humans approve; a pinned script executes on one named machine. See `docs/security-model.md`.
+
+## Status
+Session kit for the Cloud & AI Summit 2026. `secret-scan` runs on every push and pull request. `remediate-rb-001` is disabled until the `remediation-approval` environment (required reviewers) and the Azure OIDC variables are set up again for this repository with `Setup-ApprovalGate.ps1`.
+
+## License
+MIT. See [LICENSE](LICENSE).
