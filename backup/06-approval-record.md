@@ -1,4 +1,4 @@
-# Approval record (captured)
+# Approval record (illustrative)
 
 | Field | Value |
 |---|---|

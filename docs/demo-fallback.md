@@ -2,17 +2,19 @@
 
 Open `backup/` — it contains everything needed with **zero live dependencies**:
 
+> These files are **illustrative**: written in advance from the expected output of each step, not captured from a live run.
+
 | File | Shows |
 |---|---|
-| `backup/01-inventory.json` | Captured Resource Graph inventory: 2 demo machines, Connected, CloudOrigin AWS / GCP |
-| `backup/02-health-before.json` | Captured health query: arc-aws-demo unhealthy, arc-gcp-demo healthy |
-| `backup/03-policy.json` | Captured policy compliance |
-| `backup/04-extensions.json` | Captured extension inventory (AMA on all three) |
+| `backup/01-inventory.json` | Illustrative Resource Graph inventory: 2 demo machines, Connected, CloudOrigin AWS / GCP |
+| `backup/02-health-before.json` | Illustrative health query: arc-aws-demo unhealthy, arc-gcp-demo healthy |
+| `backup/03-policy.json` | Illustrative policy compliance |
+| `backup/04-extensions.json` | Illustrative extension inventory (AMA on all three) |
 | `evidence/sanitized-example.json` | The full sanitized incident package |
 | `backup/05-ai-explanation.md` | Pre-generated, labelled AI explanation and change proposal |
-| `backup/06-approval-record.md` | Captured approval record (reviewer redacted) |
-| `backup/07-health-after.json` | Captured verification: arc-aws-demo healthy |
-| `backup/08-remediation-transcript.txt` | Captured console output of `remediate.sh` on arc-aws-demo (90-second clip optional) |
+| `backup/06-approval-record.md` | Illustrative approval record (reviewer redacted) |
+| `backup/07-health-after.json` | Illustrative verification: arc-aws-demo healthy |
+| `backup/08-remediation-transcript.txt` | Illustrative console output of `remediate.sh` on arc-aws-demo (90-second clip optional) |
 
 Same narrative, same order: **Detect → Explain → Approve → Remediate → Verify → Document.** Narrate each file; nothing is executed, nothing is rebuilt.
 
@@ -20,7 +22,7 @@ Same narrative, same order: **Detect → Explain → Approve → Remediate → V
 Hyper-V VM fails to start · Hyper-V networking fails · Arc connection unavailable · AWS auth fails · GCP auth fails · Azure auth fails · `terraform apply` fails · quota blocks deployment · a required cloud API is unavailable · model endpoint fails · approval workflow fails · network instability · unexpected billing or security exposure · main path exceeds its time box (demo must start by 0:75 and finish by 1:45).
 
 ## Switch procedure (< 60 seconds)
-1. Say: "I'm switching to the captured briefing so we keep the full lifecycle."
+1. Say: "I'm switching to the prepared briefing so we keep the full lifecycle."
 2. Open `backup/` in the editor; open `evidence/sanitized-example.json` and the slide "Backup demonstration".
 3. Walk the eight files in order; end on the verification diff and the incident record.
 
